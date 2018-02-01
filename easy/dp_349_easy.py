@@ -1,7 +1,20 @@
-import operator
-import itertools
+from operator import le, ge, eq, lt, gt
+from itertools import combinations
 
 def parse_input(input_str):
+    """Parse input string.
+    Args:
+        input_str (str): string in form:
+            "Input: [required_number] [given_coins]
+            Output: [comparison_clause]"
+    Returns:
+        (tuple): (change_data, comparison),
+            where change_data is a list of integers, first of which
+            is target number and the other ones are coins at hand and
+            comparison is a tuple in form
+            (comparison_function, (None as placeholder, number_to_compare))
+    """
+
     input_str = input_str.split('\n')
     change_data = num_of_coins = None
 
@@ -11,11 +24,7 @@ def parse_input(input_str):
             change_data = [int(x) for x in change_data]
         if 'Output' in i:
             num_of_coins = i[i.index(':')+1:].strip()
-            operators = {'<=': operator.le,
-                         '>=': operator.ge,
-                         '=': operator.eq,
-                         '<': operator.lt,
-                         '>': operator.gt}
+            operators = {'<=': le, '>=': ge, '=': eq, '<': lt, '>': gt}
             _, sign, value = num_of_coins.split()
             comparison = (operators[sign], (None, int(value)))
 
@@ -37,7 +46,7 @@ def get_change(input_str, compare=True):
     possible_summs = []
     num_of_coins = len(coins)
     for r in range(1, num_of_coins+1):
-        combos = itertools.combinations(coins, r)
+        combos = combinations(coins, r)
         for c in combos:
             if sum(c) == target:
                 c = sorted(c, reverse=True)
@@ -112,4 +121,4 @@ if __name__ == '__main__':
     print('bonus_input_1:', min_num_of_coins(bonus_input_1))
     print('bonus_input_2:', min_num_of_coins(bonus_input_2))
 
-    print('challenge_input:', get_change(challenge_input))
+    # print('challenge_input:', get_change(challenge_input))
