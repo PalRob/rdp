@@ -121,4 +121,6 @@ if __name__ == '__main__':
     print('bonus_input_1:', min_num_of_coins(bonus_input_1))
     print('bonus_input_2:', min_num_of_coins(bonus_input_2))
 
+    # Subset sum problem is an NP problem. It is impossible to brute force
+    # the solution in a reasonable amount of time.
     # print('challenge_input:', get_change(challenge_input))
