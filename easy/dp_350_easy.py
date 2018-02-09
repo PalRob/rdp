@@ -1,5 +1,6 @@
 # TODO:
 # Move input to separate file;
+# Fails to produce optimal solution
 
 def parse_input(input_str):
     input_list = input_str.strip().split('\n')
@@ -183,11 +184,10 @@ input_2 = """270 142 501 865 384 957 947 603 987 428 907 10 691 707 397 917 492 
 152 b195720
 46 b453542"""
 
-input_3 = """150 150 300 150 150
-70 A
-76 B
-99 C
-75 D
-105 E"""
+input_3 = """20 11 11
+11 a
+10 b
+10 c
+"""
 
-print_used_shelves(input_2)
+print_used_shelves(input_3)
