@@ -1,10 +1,7 @@
 # TODO:
-# Function get_num_of_bookshelves probuble does not return the
-# min amount of shelves needed;
-# No bonus tasks;
 # Move input to separate file;
 
-def parse_input(input_str, sort_input=True):
+def parse_input(input_str):
     input_list = input_str.strip().split('\n')
     shelves = input_list[0]
     shelves = [int(n) for n in shelves.strip().split()]
@@ -16,34 +13,51 @@ def parse_input(input_str, sort_input=True):
         book_title = book[book.index(' '):].strip()
         books.append((num_of_pages, book_title))
 
-    if sort_input:
-        shelves = sorted(shelves, reverse=True)
-        books = sorted(books, key=lambda book: book[0], reverse=True)
+    shelves = sorted(shelves, reverse=True)
+    books = sorted(books, key=lambda book: book[0], reverse=True)
 
     return (shelves, books)
 
-def get_num_of_bookshelves(input_str):
+def get_bookshelves(input_str):
     shelves, books = parse_input(input_str)
     books_sizes = [book[0] for book in books]
     num_of_shelves = len(shelves)
-    shelves_used = 0
+    num_used = 0
+
+    used_shelves = []
+    for s in shelves:
+        empty_shelve = []
+        empty_shelve.append(s)
+        used_shelves.append(empty_shelve)
+
 
     cant_fit_biggest = max(books_sizes) > max(shelves)
     cant_fit_all = sum(books_sizes) > sum(shelves)
     if cant_fit_biggest or cant_fit_all:
         return None
 
-    for pages in books_sizes:
+    for book in books:
         for i in range(num_of_shelves):
-            if shelves[i] > pages:
-                shelves[i] -= pages
-                if i+1 > shelves_used:
-                    shelves_used = i+1
+            if used_shelves[i][0] > book[0]:
+                used_shelves[i][0] -= book[0]
+                used_shelves[i].append(book)
+
+                if i+1 > num_used:
+                    num_used = i+1
+                used_shelves = (sorted(used_shelves[:num_used], key=lambda shelf: shelf[0] )
+                        + used_shelves[num_used:])
                 break
         else:
             return None
 
-    return shelves_used
+    return used_shelves
+
+def print_used_shelves(input_str):
+    used_shelves = [s for s in get_bookshelves(input_str) if len(s)>1]
+    for i, shelf in enumerate(used_shelves):
+        print("shelve num {0}, space left {1}:".format(i+1, shelf[0]))
+        for book in shelf[1:]:
+            print("\t{}, {} pages".format(book[1], book[0]))
 
 input_1 = """150 150 300 150 150
 70 A Game of Thrones
@@ -169,5 +183,11 @@ input_2 = """270 142 501 865 384 957 947 603 987 428 907 10 691 707 397 917 492 
 152 b195720
 46 b453542"""
 
+input_3 = """150 150 300 150 150
+70 A
+76 B
+99 C
+75 D
+105 E"""
 
-print(get_num_of_bookshelves(input_2))
+print_used_shelves(input_2)
