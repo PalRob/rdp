@@ -1,9 +1,129 @@
 """Creates table of contents for Reddit Daily Programmer repository.
 Goes throught local files within this repo and finds all files named
-"dp_number_difficulty.extension".
-"""
-import os
+with template "dp_number_difficulty.extension".
+Must be placed at the top of rdp derectory tree to work.
 
-local_dir = os.path.dirname(os.path.abspath(__file__))
-README_FILE = local_dir + r"\README.md"
-#os.path.isfile(README_FILE)
+TODO:
+Create a table in README.md file;
+With regex search throught file for 'Status: Done' comment to mark
+the chellange finished, consider task unfinished otherwise;
+Additionaly, log time of the last change in the file and of the last
+walk throught the folder to skip reading through files that were not
+changed since;
+Find a way to deal with the errors in the rdp structure;
+Add automatic insertion of the challenge name and shortened url
+into docstring of the file, will requaire walking through the
+reddit's page to log all of the challenges
+"""
+
+
+import os
+import re
+
+LOCAL_DIR = os.path.dirname(os.path.abspath(__file__))
+FILE_NAME = 'README.md'
+EXTENTIONS = ['.py']
+DIFFICULTY = {'easy': 0, 'int': 1, 'hard': 2}
+
+def get_rdp_files(rdp_dir, extentions=EXTENTIONS, difficulty=DIFFICULTY):
+    """Goes through rdp_dir and finds all rdp challenge files.
+    Args:
+        rdp_dir(str): path to local rdp repository;
+        extentions(list): extentions of the challenge files. Defaults to
+            global constant EXTENTIONS;
+        difficulty(dict): dictionary in form
+            {diff_level: col_number (starts at 0)}. Defaults to global
+            constant DIFFICULTY.
+    Returns:
+        rdp_files(dict): dictionary in form
+            {challenge number(int), [difficulty[0] or "", ...], ...}.
+            Empty of no files were found.
+    """
+    difficulty = {'easy': 0, 'int': 1, 'hard': 2}
+
+    difficulty_str = "|".join(list(difficulty.keys()))
+    extentions_str = "|".join(extentions)
+    # Three groups:
+    # challenge number, difficulty, file extention
+    regex_pattern = 'dp_(\d+)_({})({})'.format(difficulty_str, extentions_str)
+    rdp_regex = re.compile(regex_pattern)
+
+    rdp_files = {}
+
+    for (dirpath, dirnames, filenames) in os.walk(rdp_dir):
+        for filename in filenames:
+            match = rdp_regex.search(filename)
+            if match:
+                path = os.path.join(dirpath, filename)
+                num = int(match.group(1))
+                diff = match.group(2)
+                # Extention may be useful someday
+                # ext = match.group(3)
+
+                if not num in rdp_files:
+                    rdp_files[num] = [""]*len(difficulty)
+                rdp_files[num][difficulty[diff]] = path
+
+    return rdp_files
+
+def finished(path):
+    """Checks if challenge in given path is finished.
+    Args:
+        path(str):
+    Returns:
+        (bool): Trues if challenge is finished, False otherwise
+    """
+    # TODO:
+    # Write a fucntion that determines whether or not challenge is finished
+    if not os.path.isfile(path):
+        return False
+    else:
+        return True
+
+def make_table(rdp_files, difficulty=DIFFICULTY):
+    """Creates table from all found files in rdp_files
+    Args:
+        rdp_files(dict):
+        difficulty(dict): dictionary in form
+            {diff_level: col_number (starts at 0)}. Defaults to global
+            constant DIFFICULTY.
+    Returns:
+        table(str): multiline string containing table of challanges
+            with headers.
+    """
+    diff = sorted(difficulty, key=lambda i: difficulty[i])
+    diff = " | ".join(diff)
+    table_header = "   |{}".format(diff)
+    table_sep = "---|---|---|---"
+
+    challanges = []
+    for i in range(min(rdp_files), max(rdp_files)+1):
+        if i not in rdp_files:
+            ch = " | " * (len(difficulty)-1)
+        else:
+            ch = " | ".join(
+                ["" if x=="" else "done" if  finished(x)
+                    else "unfinished" for x in rdp_files[i]])
+
+        row = "{0} | {1}".format(i, ch)
+        challanges.append(row)
+
+    challanges = "\n".join(challanges)
+    table = "\n".join((table_header, table_sep, challanges))
+
+    return table
+
+
+def make_readme(rdp_dir):
+    """
+    """
+    # Check if README.md exist. If not - create it with build-in open()
+    #if not os.path.isfile(README_FILE):
+    #    with open(README_FILE, 'w'):
+    pass
+
+    pass
+
+if __name__ == '__main__':
+    files = get_rdp_files(LOCAL_DIR)
+    print(make_table(files))
