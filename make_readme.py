@@ -4,7 +4,6 @@ with template "dp_number_difficulty.extension".
 Must be placed at the top of rdp derectory tree to work.
 
 TODO:
-Create a table in README.md file;
 With regex search throught file for 'Status: Done' comment to mark
 the chellange finished, consider task unfinished otherwise;
 Additionaly, log time of the last change in the file and of the last
@@ -16,12 +15,12 @@ into docstring of the file, will requaire walking through the
 reddit's page to log all of the challenges
 """
 
-
 import os
 import re
 
 LOCAL_DIR = os.path.dirname(os.path.abspath(__file__))
-FILE_NAME = 'README.md'
+README = 'readme.md'
+README_FILE = os.path.join(LOCAL_DIR, README)
 EXTENTIONS = ['.py']
 DIFFICULTY = {'easy': 0, 'int': 1, 'hard': 2}
 
@@ -94,7 +93,8 @@ def make_table(rdp_files, difficulty=DIFFICULTY):
     diff = sorted(difficulty, key=lambda i: difficulty[i])
     diff = " | ".join(diff)
     table_header = "   |{}".format(diff)
-    table_sep = "---|---|---|---"
+    num_of_col = len(difficulty)+1
+    table_sep = "|".join(["---"]*num_of_col)
 
     challanges = []
     for i in range(min(rdp_files), max(rdp_files)+1):
@@ -114,16 +114,25 @@ def make_table(rdp_files, difficulty=DIFFICULTY):
     return table
 
 
-def make_readme(rdp_dir):
+def make_readme(rdp_dir, readme_file=README_FILE):
+    """Makes readme and writes it in readme_file.
+    Args:
+        rdp_dir(str): path to top of the local rdp repo
+        readme_file(str): path to the readme file. Defaults to global
+            constant README_FILE.
+    Returns:
+        None
     """
-    """
-    # Check if README.md exist. If not - create it with build-in open()
-    #if not os.path.isfile(README_FILE):
-    #    with open(README_FILE, 'w'):
-    pass
+    header = ("# Reddit Daily Programmer\n",
+        "Repository for [r/DailyProgrammer](https://www.reddit.com/r/dailyprogrammer) challenges.\n")
+    header = "".join(header)
 
-    pass
+    table = make_table(get_rdp_files(rdp_dir))
+    contents = "\n".join((header, table))
+    with open(readme_file, 'w') as file:
+        for line in contents:
+            file.write(line)
+
 
 if __name__ == '__main__':
-    files = get_rdp_files(LOCAL_DIR)
-    print(make_table(files))
+    make_readme(LOCAL_DIR, README_FILE)
