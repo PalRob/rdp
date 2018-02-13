@@ -97,7 +97,7 @@ def make_table(rdp_files, difficulty=DIFFICULTY):
     table_sep = "|".join(["---"]*num_of_col)
 
     challanges = []
-    for i in range(min(rdp_files), max(rdp_files)+1):
+    for i in range(max(rdp_files), min(rdp_files)-1, -1):
         if i not in rdp_files:
             ch = " | " * (len(difficulty)-1)
         else:
