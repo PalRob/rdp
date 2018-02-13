@@ -92,7 +92,7 @@ def make_table(rdp_files, difficulty=DIFFICULTY):
     """
     diff = sorted(difficulty, key=lambda i: difficulty[i])
     diff = " | ".join(diff)
-    table_header = "---|{}".format(diff)
+    table_header = " |{}".format(diff)
     num_of_col = len(difficulty)+1
     table_sep = "|".join(["---"]*num_of_col)
 
@@ -102,7 +102,7 @@ def make_table(rdp_files, difficulty=DIFFICULTY):
             ch = " | " * (len(difficulty)-1)
         else:
             ch = " | ".join(
-                ["---" if x=="" else "done" if  finished(x)
+                [" " if x=="" else "done" if  finished(x)
                     else "unfinished" for x in rdp_files[i]])
 
         row = "{0} | {1}".format(i, ch)
