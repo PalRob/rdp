@@ -92,7 +92,7 @@ def make_table(rdp_files, difficulty=DIFFICULTY):
     """
     diff = sorted(difficulty, key=lambda i: difficulty[i])
     diff = " | ".join(diff)
-    table_header = "   |{}".format(diff)
+    table_header = "---|{}".format(diff)
     num_of_col = len(difficulty)+1
     table_sep = "|".join(["---"]*num_of_col)
 
