@@ -1,7 +1,7 @@
 # Reddit Daily Programmer
 Repository for [r/DailyProgrammer](https://www.reddit.com/r/dailyprogrammer) challenges.
 
- |easy | int | hard
+-|easy | int | hard
 ---|---|---|---
 340 | done |   |  
 341 | done |   |  
