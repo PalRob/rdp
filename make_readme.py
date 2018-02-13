@@ -102,7 +102,7 @@ def make_table(rdp_files, difficulty=DIFFICULTY):
             ch = " | " * (len(difficulty)-1)
         else:
             ch = " | ".join(
-                ["" if x=="" else "done" if  finished(x)
+                ["---" if x=="" else "done" if  finished(x)
                     else "unfinished" for x in rdp_files[i]])
 
         row = "{0} | {1}".format(i, ch)
